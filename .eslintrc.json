@@ -1,0 +1,30 @@
+{
+  "env": {
+    "mocha": true,
+    "node": true
+  },
+  "extends": ["airbnb-base", "prettier"],
+  "rules": {
+    "func-names": ["off"],
+    "no-param-reassign": ["off"],
+    "radix": ["error", "as-needed"],
+    "consistent-return": "off",
+    "no-underscore-dangle": ["warn", { "allow": ["_id"] }],
+    "no-useless-escape": "off",
+    "no-use-before-define": ["warn", { "functions": false }],
+    "object-curly-spacing": ["warn", "always"],
+    "max-len": "off",
+    "no-plusplus": "off",
+    "global-require": "off",
+    "indent": ["warn", 2, { "SwitchCase": 1 }],
+    "class-methods-use-this": "off",
+    "no-unused-vars": "warn",
+    "no-console": "warn",
+    "import/no-extraneous-dependencies": "off"
+  },
+  "overrides": [
+    {
+      "files": ["*.spec.js"]
+    }
+  ]
+}
