@@ -1,77 +1,89 @@
 const Promise = require('bluebird');
 const mongoose = require('mongoose');
 
-const reconnectTimeout = 5 * 1000;  // 5 seconds
-
+// Use Bluebird promises.
 mongoose.Promise = Promise;
 
-// Turn on usePushEach for all models.
+// Set default schema options.
 mongoose.plugin(schema => {
+  // Turn on timestamps for all models.
+  schema.options.timestamps = true;
+
+  // Turn on usePushEach for all models.
   schema.options.usePushEach = true;
 });
 
 class Client {
-  constructor(uri, options) {
+  constructor(uri, options = {}) {
     if (!uri || typeof uri !== 'string') {
       throw new Error('Invalid URI');
     }
 
+    this.options = options;
     this.uri = uri;
-    this.options = options || {};
     this.connection = null;
-
-    // Connect immediately on instantiation.
-    this.connect();
+    this.connecting = false;
   }
 
   /*
-   * Define a property getter for checking whether a connection
-   * is established.
+   * Define a property getter for checking whether a connection is established.
    */
   get connected() {
-    return this.connection.readyState === 1;
+    return this.connection && this.connection.readyState === 1;
   }
 
-  connect() {
-    const defaultOptions = {
-      reconnectTries: Number.MAX_VALUE,
-      useMongoClient: true,
-      poolSize: 5,
-      socketTimeoutMS: 60 * 1000,
-      keepAlive: 30 * 1000,
-    };
-    const options = Object.assign({}, defaultOptions, this.options);
+  async connect() {
+    // Do nothing if connecting or already connected.
+    if (this.connecting || this.connected) {
+      return;
+    }
 
-    this.connection = mongoose.createConnection(this.uri, options);
+    this.connecting = true;
+
+    const defaultOptions = {
+      // Never stop trying to reconnect.
+      reconnectTries: Number.MAX_VALUE,
+
+      // The maximum number of socket connections for the connection.
+      poolSize: 10,
+
+      // How long the MongoDB driver will wait before killing a socket due to inactivity after initial connection.
+      socketTimeoutMS: 60 * 1000,
+
+      // Keep the connection alive.
+      keepAlive: true,
+
+      // Reference: https://mongoosejs.com/docs/lambda.html
+      // Buffering means mongoose will queue up operations if it gets
+      // disconnected from MongoDB and send them when it reconnects.
+      // With serverless, better to fail fast if not connected.
+      bufferCommands: false, // Disable mongoose buffering
+      bufferMaxEntries: 0 // and MongoDB driver buffering
+    };
+
+    const options = {
+      ...defaultOptions,
+      ...this.options
+    };
+
+    this.connection = await mongoose.createConnection(this.uri, options);
+    this.connecting = false;
 
     this.connection.on('error', () => {
       // Disconnect if connected.
       if (this.connection.readyState !== 0) {
         this.connection.close();
       }
-
-      setTimeout(() => {
-        // Wait and then try to reconnect.
-        this.connect();
-      }, reconnectTimeout);
     });
   }
 
   disconnect(callback) {
     // Don't try to disconnect if already disconnected.
-    if (this.connection.readyState === 0) {
+    if (!this.connection || this.connection.readyState === 0) {
       return callback();
     }
 
     this.connection.close(callback);
-  }
-
-  on(eventName, callback) {
-    this.connection.on(eventName, callback);
-  }
-
-  once(eventName, callback) {
-    this.connection.once(eventName, callback);
   }
 }
 
