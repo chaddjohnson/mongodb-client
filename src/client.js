@@ -22,7 +22,6 @@ class Client {
     this.options = options;
     this.uri = uri;
     this.connection = null;
-    this.connecting = false;
   }
 
   /*
@@ -33,12 +32,10 @@ class Client {
   }
 
   async connect() {
-    // Do nothing if connecting or already connected.
-    if (this.connecting || this.connected) {
+    // Do nothing if already connected.
+    if (this.connected) {
       return;
     }
-
-    this.connecting = true;
 
     const defaultOptions = {
       // Never stop trying to reconnect.
@@ -67,7 +64,6 @@ class Client {
     };
 
     this.connection = await mongoose.createConnection(this.uri, options);
-    this.connecting = false;
 
     this.connection.on('error', () => {
       // Disconnect if connected.
