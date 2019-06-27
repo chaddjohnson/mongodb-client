@@ -24,8 +24,8 @@ class Client {
     this.connection = null;
   }
 
-  /*
-   * Define a property getter for checking whether a connection is established.
+  /**
+   * Property getter for checking whether a connection is established.
    */
   get connected() {
     return this.connection && this.connection.readyState === 1;
