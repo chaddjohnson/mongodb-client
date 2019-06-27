@@ -28,7 +28,7 @@ class Client {
    * Property getter for checking whether a connection is established.
    */
   get connected() {
-    return this.connection && this.connection.readyState === 1;
+    return !!this.connection && this.connection.readyState === 1;
   }
 
   async connect() {
