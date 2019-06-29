@@ -38,11 +38,11 @@ class Client {
     }
 
     const defaultOptions = {
-      // Never stop trying to reconnect.
-      reconnectTries: Number.MAX_VALUE,
+      reconnectTries: 30,
+      reconnectInterval: 500,
 
-      // The maximum number of socket connections for the connection.
-      poolSize: 10,
+      // The maximum number of sockets the MongoDB driver will keep open for this connection.
+      poolSize: 5,
 
       // How long the MongoDB driver will wait before killing a socket due to inactivity after initial connection.
       socketTimeoutMS: 60 * 1000,
