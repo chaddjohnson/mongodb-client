@@ -20,7 +20,9 @@
     "class-methods-use-this": "off",
     "no-unused-vars": "warn",
     "no-console": "warn",
-    "import/no-extraneous-dependencies": "off"
+    "import/no-extraneous-dependencies": "off",
+    "keyword-spacing": ["warn", { "before": true, "after": true }],
+    "space-infix-ops": "warn"
   },
   "overrides": [
     {
