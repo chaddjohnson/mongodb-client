@@ -1,0 +1,42 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: circleci/node:10.16.0
+    working_directory: ~/repo
+    branches:
+      only:
+        - master
+    steps:
+      - checkout
+      - run:
+          name: Update NPM
+          command: sudo npm install -g npm@latest
+      - restore_cache:
+          keys:
+            - dependencies-cache-{{ .Branch }}-{{ checksum "package.json" }}
+            - dependencies-cache
+      - run:
+          name: Create .npmrc file
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+      - run:
+          name: Install dependencies
+          command: |
+            yarn install
+            sudo apt-get update && sudo apt-get install -qq -y jq
+      - run:
+          name: Run lint
+          command: yarn lint
+      - run:
+          name: Deploy
+          command: |
+            libLocalVersion=`jq -r ".version" package.json`
+            libPublishedVersion=`npm show @chaddjohnson/mongodb-client-lambda version`
+
+            if [[ "$libPublishedVersion" != "$libLocalVersion" ]]; then
+              npm publish --access restricted
+            fi
+      - save_cache:
+          key: dependencies-cache-{{ .Branch }}-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
