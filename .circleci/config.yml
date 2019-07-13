@@ -1,12 +1,10 @@
 version: 2.1
+
 jobs:
-  build:
+  deploy:
     docker:
       - image: circleci/node:10.16.0
     working_directory: ~/repo
-    branches:
-      only:
-        - master
     steps:
       - checkout
       - run:
@@ -40,3 +38,14 @@ jobs:
           key: dependencies-cache-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
             - ./node_modules
+
+workflows:
+  version: 2
+  deploy:
+    jobs:
+      - deploy:
+          context: shopify-boilerplate
+          filters:
+            branches:
+              only:
+                - master
