@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  deploy:
+  publish:
     docker:
       - image: circleci/node:10.16.0
     working_directory: ~/repo
@@ -26,12 +26,13 @@ jobs:
           name: Run lint
           command: yarn lint
       - run:
-          name: Deploy
+          name: Publish
           command: |
-            libLocalVersion=`jq -r ".version" package.json`
-            libPublishedVersion=`npm show @chaddjohnson/mongodb-client-lambda version`
+            name=`jq -r ".name" package.json`
+            localVersion=`jq -r ".version" package.json`
+            publishedVersion=`npm show $name version`
 
-            if [[ "$libPublishedVersion" != "$libLocalVersion" ]]; then
+            if [[ "$publishedVersion" != "$localVersion" ]]; then
               npm publish --access restricted
             fi
       - save_cache:
@@ -41,9 +42,9 @@ jobs:
 
 workflows:
   version: 2
-  deploy:
+  publish:
     jobs:
-      - deploy:
+      - publish:
           context: shopify-boilerplate
           filters:
             branches:
