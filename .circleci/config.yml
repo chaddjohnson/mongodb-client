@@ -19,9 +19,7 @@ jobs:
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
       - run:
           name: Install dependencies
-          command: |
-            yarn install
-            sudo apt-get update && sudo apt-get install -qq -y jq
+          command: yarn install && sudo apt-get update && sudo apt-get install -qq -y jq
       - run:
           name: Run lint
           command: yarn lint
