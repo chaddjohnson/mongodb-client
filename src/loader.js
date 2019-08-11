@@ -30,7 +30,8 @@ const loadModel = async (modelName, modelPathsMap, connectionUri, connectionOpti
     return modelMap[modelName];
   }
 
-  await client.connectAsync();
+  // If the bufferCommands connection option is false, the connection must be established prior to models being loaded.
+  await client.connect();
 
   loadModels(modelPathsMap);
 
