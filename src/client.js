@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-const mongoose = require('mongoose');
+const mongoose = require('mongoose');  // eslint-disable-line import/no-unresolved
 
 // Use Bluebird promises.
 mongoose.Promise = Promise;
