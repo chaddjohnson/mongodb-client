@@ -1,43 +1,14 @@
 const Client = require('./client');
 
-class FactoryCacher {
-  constructor() {
-    /*
-     * This is encapsulated inside a class rather than being global
-     * to this module in order to avoid collisions.
-     */
-    this.cachedClients = {};
-  }
+const cache = {};
 
-  get(cacheKey, factoryFn) {
-    // See if a client is cached.
-    if (this.cachedClients[cacheKey]) {
-      // Return the cached client.
-      return this.cachedClients[cacheKey];
-    }
+const get = (connectionUri, options) => {
+  const cacheKey = connectionUri;
+  const client = cache[cacheKey] || new Client(connectionUri, options);
 
-    const client = factoryFn();
+  cache[cacheKey] = client;
 
-    // Cache the client.
-    this.cachedClients[cacheKey] = client;
-
-    return client;
-  }
-}
-
-const factoryCache = new FactoryCacher();
-
-const factory = (url, options) => {
-  return function() {
-    return new Client(url, options);
-  };
-};
-
-const get = (url, options) => {
-  const cacheKey = url;
-  const factoryFn = factory(url, options);
-
-  return factoryCache.get(cacheKey, factoryFn);
+  return client;
 };
 
 module.exports.get = get;

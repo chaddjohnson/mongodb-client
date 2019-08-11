@@ -19,32 +19,10 @@ class Client {
       throw new Error('Invalid URI');
     }
 
-    this.options = options;
     this.uri = uri;
     this.connection = null;
-  }
 
-  /**
-   * Property getter for checking whether a connection is established.
-   */
-  get connected() {
-    return !!this.connection && this.connection.readyState === 1;
-  }
-
-  /**
-   * Property getter for checking whether a connection is being established.
-   */
-  get connecting() {
-    return !!this.connection && this.connection.readyState === 2;
-  }
-
-  async connect() {
-    // Do nothing if already connected or connecting.
-    if (this.connected || this.connecting) {
-      return;
-    }
-
-    const defaultOptions = {
+    this.options = {
       reconnectTries: 30,
       reconnectInterval: 500,
       useNewUrlParser: true,
@@ -63,15 +41,33 @@ class Client {
       // disconnected from MongoDB and send them when it reconnects.
       // With serverless, better to fail fast if not connected.
       bufferCommands: false, // Disable mongoose buffering
-      bufferMaxEntries: 0 // and MongoDB driver buffering
-    };
+      bufferMaxEntries: 0, // and MongoDB driver buffering
 
-    const options = {
-      ...defaultOptions,
-      ...this.options
+      ...options
     };
+  }
 
-    this.connection = await mongoose.createConnection(this.uri, options);
+  /**
+   * Property getter for checking whether a connection is established.
+   */
+  get connected() {
+    return !!this.connection && this.connection.readyState === 1;
+  }
+
+  /**
+   * Property getter for checking whether a connection is being established.
+   */
+  get connecting() {
+    return !!this.connection && this.connection.readyState === 2;
+  }
+
+  connect() {
+    // Do nothing if already connected or connecting.
+    if (this.connected || this.connecting) {
+      return this.connection;
+    }
+
+    this.connection = mongoose.createConnection(this.uri, this.options);
 
     this.connection.on('error', () => {
       // Disconnect if connected.
@@ -79,6 +75,8 @@ class Client {
         this.connection.close();
       }
     });
+
+    return this.connection;
   }
 
   disconnect(callback) {

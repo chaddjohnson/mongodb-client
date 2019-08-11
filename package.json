@@ -1,7 +1,7 @@
 {
   "name": "@chaddjohnson/mongodb-client-lambda",
   "version": "1.1.2",
-  "description": "MongoDB + Mongoose client wrapper for use with AWS Lambda.",
+  "description": "Mongoose client wrapper.",
   "main": "src/index.js",
   "private": false,
   "scripts": {
@@ -14,8 +14,7 @@
   "author": "Chad Johnson <chad.d.johnson@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "bluebird": "^3.5.5",
-    "mongoose": "^5.6.0"
+    "bluebird": "^3.5.5"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
@@ -24,6 +23,6 @@
     "eslint-plugin-import": "^2.17.3"
   },
   "peerDependencies": {
-    "mongoose": ">= 5"
+    "mongoose": "4.x || 5.x"
   }
 }
