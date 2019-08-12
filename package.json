@@ -1,7 +1,7 @@
 {
   "name": "@chaddjohnson/mongodb-client-lambda",
-  "version": "1.2.0",
-  "description": "Mongoose client wrapper.",
+  "version": "1.2.1",
+  "description": "Mongoose client wrapper for use with Lambda and non-Lambda environments.",
   "main": "src/index.js",
   "private": false,
   "scripts": {
