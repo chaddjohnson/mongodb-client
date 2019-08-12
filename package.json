@@ -1,9 +1,8 @@
 {
   "name": "@chaddjohnson/mongodb-client-lambda",
-  "version": "1.2.1",
+  "version": "1.2.3",
   "description": "Mongoose client wrapper for use with Lambda and non-Lambda environments.",
   "main": "src/index.js",
-  "private": false,
   "scripts": {
     "lint": "eslint src/**/*.js"
   },
