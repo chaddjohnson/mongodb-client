@@ -26,6 +26,7 @@ class Client {
       reconnectTries: 30,
       reconnectInterval: 500,
       useNewUrlParser: true,
+      useCreateIndex: true,
 
       // The maximum number of sockets the MongoDB driver will keep open for this connection.
       poolSize: 5,
