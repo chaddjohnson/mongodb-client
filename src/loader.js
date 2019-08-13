@@ -16,7 +16,7 @@ const loadModels = (modelPathsMap) => {
       ...map,
       [modelName]: require(modelPathsMap[modelName])  // eslint-disable-line import/no-dynamic-require
     };
-  }, {})
+  }, {});
 
   modelsLoaded = true;
 
