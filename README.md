@@ -73,6 +73,7 @@ module.exports.handler = async (event, context) => {
 
 For this to work, your Lambda functions will need access to your database server. Some options to make this possible are:
 
+1. Give your Lambda functions access to your VPC. Read [this](https://gist.github.com/reggi/dc5f2620b7b4f515e68e46255ac042a7) for instructions.
 1. VPC Peering. See the following articles:
 
     * [A basic guide to connecting a AWS Lambda function to MongoDB in EC2 via VPC Peering](https://medium.com/@kavitanambissan/a-basic-guide-to-connecting-a-aws-lambda-function-to-mongodb-in-ec2-via-vpc-peering-7a644e8c5f35)
