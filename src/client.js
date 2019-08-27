@@ -81,6 +81,8 @@ class Client {
   }
 
   disconnect(callback) {
+    callback = callback || (() => {});
+
     // Don't try to disconnect if already disconnected.
     if (!this.connection || this.connection.readyState === 0) {
       return callback();
