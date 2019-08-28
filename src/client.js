@@ -25,8 +25,6 @@ class Client {
     this.options = {
       reconnectTries: 30,
       reconnectInterval: 500,
-      useNewUrlParser: true,
-      useCreateIndex: true,
 
       // The maximum number of sockets the MongoDB driver will keep open for this connection.
       poolSize: 5,
@@ -46,6 +44,23 @@ class Client {
 
       ...options
     };
+
+    // Add options specific to Mongoose 4.
+    if (mongoose.version.match(/^4\./)) {
+      this.options = {
+        ...this.options,
+        useMongoClient: true
+      }
+    }
+
+    // Add options specific to Mongoose 5.
+    if (mongoose.version.match(/^5\./)) {
+      this.options = {
+        ...this.options,
+        useNewUrlParser: true,
+        useCreateIndex: true
+      }
+    }
   }
 
   /**
