@@ -31,7 +31,7 @@ jobs:
             publishedVersion=`npm show $name version`
 
             if [[ "$publishedVersion" != "$localVersion" ]]; then
-              npm publish --access restricted
+              npm publish --access public
             fi
       - save_cache:
           key: dependencies-cache-{{ .Branch }}-{{ checksum "package.json" }}
