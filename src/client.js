@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-const mongoose = require('mongoose');  // eslint-disable-line import/no-unresolved
+const mongoose = require('mongoose'); // eslint-disable-line import/no-unresolved
 
 // Use Bluebird promises.
 mongoose.Promise = Promise;
@@ -50,7 +50,7 @@ class Client {
       this.options = {
         ...this.options,
         useMongoClient: true
-      }
+      };
     }
 
     // Add options specific to Mongoose 5.
@@ -59,7 +59,7 @@ class Client {
         ...this.options,
         useNewUrlParser: true,
         useCreateIndex: true
-      }
+      };
     }
   }
 

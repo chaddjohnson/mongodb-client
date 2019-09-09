@@ -3,7 +3,7 @@ const factory = require('./factory');
 let modelsLoaded = false;
 let modelMap = {};
 
-const loadModels = (modelPathsMap) => {
+const loadModels = modelPathsMap => {
   if (modelsLoaded) {
     return modelMap;
   }
@@ -14,7 +14,7 @@ const loadModels = (modelPathsMap) => {
   modelMap = modelNames.reduce((map, modelName) => {
     return {
       ...map,
-      [modelName]: require(modelPathsMap[modelName])  // eslint-disable-line import/no-dynamic-require
+      [modelName]: require(modelPathsMap[modelName]) // eslint-disable-line import/no-dynamic-require
     };
   }, {});
 

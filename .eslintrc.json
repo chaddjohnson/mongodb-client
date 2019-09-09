@@ -4,7 +4,9 @@
     "node": true
   },
   "extends": ["airbnb-base", "prettier"],
+  "plugins": ["prettier"],
   "rules": {
+    "prettier/prettier": ["warn"],
     "func-names": ["off"],
     "no-param-reassign": ["off"],
     "radix": ["error", "as-needed"],
@@ -26,7 +28,13 @@
   },
   "overrides": [
     {
-      "files": ["*.spec.js"]
+      "files": ["*.spec.js"],
+      "rules": {
+        "no-return-assign": "off",
+        "no-unused-expressions": "off",
+        "no-underscore-dangle": "off",
+        "prettier/prettier": ["off"]
+      }
     }
   ]
 }
