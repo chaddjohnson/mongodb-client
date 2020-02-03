@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/chaddjohnson/mongodb-client-lambda.git"
   },
-  "author": "Chad Johnson <chad.d.johnson@gmail.com>",
+  "author": "Chad Johnson",
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.5.5"
