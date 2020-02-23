@@ -13,8 +13,8 @@ This library takes care of the following:
 
 ## Installation
 
-1. Add to your app: `yarn install @chaddjohnson/mongodb-client-lambda`
-1. Install Mongoose in your app: `yarn install mongoose`.
+1. Add to your app: `yarn add @chaddjohnson/mongodb-client-lambda`
+1. Install Mongoose in your app: `yarn add mongoose`.
 1. Run your app: `node app.js`. If using `yarn link` or `npm link`, use `node --preserve-symlinks` since this library uses `peerDependencies` for mongoose.
 
 ## Use in Lambda environment
@@ -25,7 +25,7 @@ Define a model loader (`models/index.js`):
 const path = require('path');
 const { loadModel } = require('@chaddjohnson/mongodb-client-lambda').loader;
 
-const connectionUri = 'mongodb://localhost:27017/example-db';
+const connectionUri = process.env.DB; // 'mongodb://localhost:27017/example-db'
 
 // No need to establish database connection here as it will be estalished when `loadModel()` is called the first time.
 
@@ -38,7 +38,7 @@ const pathsMap = {
 
 // Use an async method for loading models as models must be loaded after the database
 // connection is established since command buffering is disabled for Lambda environments.
-module.exports.get = async (name) => loadModel(name, pathsMap, connectionUri);
+module.exports.get = async name => loadModel(name, pathsMap, connectionUri);
 ```
 
 Then define your Lambda handler:
@@ -53,14 +53,13 @@ module.exports.handler = async (event, context) => {
 
   try {
     const Product = await models.get('Product');
-    const products = product.find({});
+    const products = await Product.find({});
 
     return {
       statusCode: 200,
       body: products.toJSON()
     };
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.stack);
 
     return {
@@ -76,8 +75,8 @@ For this to work, your Lambda functions will need access to your database server
 1. Give your Lambda functions access to your VPC. Read [this](https://gist.github.com/reggi/dc5f2620b7b4f515e68e46255ac042a7) for instructions.
 1. VPC Peering. See the following articles:
 
-    * [A basic guide to connecting a AWS Lambda function to MongoDB in EC2 via VPC Peering](https://medium.com/@kavitanambissan/a-basic-guide-to-connecting-a-aws-lambda-function-to-mongodb-in-ec2-via-vpc-peering-7a644e8c5f35)
-    * [What is VPC Peering?](https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html)
+   - [A basic guide to connecting a AWS Lambda function to MongoDB in EC2 via VPC Peering](https://medium.com/@kavitanambissan/a-basic-guide-to-connecting-a-aws-lambda-function-to-mongodb-in-ec2-via-vpc-peering-7a644e8c5f35)
+   - [What is VPC Peering?](https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html)
 
 1. Change firewall settings for your server to allow connections from anywhere. Be sure to use SSL.
 
@@ -110,7 +109,7 @@ const connectionOptions = {
   bufferCommands: true,
   bufferMaxEntries: -1
 };
-const connectionUri = 'mongodb://localhost:27017/example-db';
+const connectionUri = process.env.DB; // 'mongodb://localhost:27017/example-db'
 const mongodbClient = mongodbClientFactory.get(connectionUri, connectionOptions);
 
 // Explicitly begin establishing the connection prior to loading data models.
@@ -129,17 +128,18 @@ const app = express();
 app.get('/products', (request, response) => {
   try {
     const Product = require('./models/product');
-    const products = product.find({});
+    const products = await Product.find({});
 
     response.status(200).json(products);
-  }
-  catch (error) {
+  } catch (error) {
     response.status(500).end();
   }
 };
 ```
 
-Notice this example does not use `model.get()` for async model loading. This is because command buffering is re-enabled. You can also use async model loading in non-Lambda environments:
+Notice this example does not use `model.get()` for async model loading. This is because command buffering is re-enabled.
+
+Async model loading can still be used in non-Lambda environments:
 
 ```javascript
 const express = require('express');
@@ -150,11 +150,10 @@ app.get('/products', (request, response) => {
   try {
     // Load model asynchronously.
     const Product = await models.get('Product');
-    const products = product.find({});
+    const products = await Product.find({});
 
     response.status(200).json(products);
-  }
-  catch (error) {
+  } catch (error) {
     response.status(500).end();
   }
 };
@@ -163,5 +162,5 @@ app.get('/products', (request, response) => {
 For this you will need to provide a `.get()` method in our model loader as shown earlier:
 
 ```javascript
-module.exports.get = async (name) => loadModel(name, pathsMap, connectionUri);
+module.exports.get = async name => loadModel(name, pathsMap, connectionUri);
 ```
