@@ -21,46 +21,7 @@ class Client {
 
     this.uri = uri;
     this.connection = null;
-
-    this.options = {
-      reconnectTries: 30,
-      reconnectInterval: 500,
-
-      // The maximum number of sockets the MongoDB driver will keep open for this connection.
-      poolSize: 5,
-
-      // How long the MongoDB driver will wait before killing a socket due to inactivity after initial connection.
-      socketTimeoutMS: 60 * 1000,
-
-      // Keep the connection alive.
-      keepAlive: true,
-
-      // Reference: https://mongoosejs.com/docs/lambda.html
-      // Buffering means mongoose will queue up operations if it gets
-      // disconnected from MongoDB and send them when it reconnects.
-      // With serverless, better to fail fast if not connected.
-      bufferCommands: false, // Disable mongoose buffering
-      bufferMaxEntries: 0, // and MongoDB driver buffering
-
-      ...options
-    };
-
-    // Add options specific to Mongoose 4.
-    if (mongoose.version.match(/^4\./)) {
-      this.options = {
-        ...this.options,
-        useMongoClient: true
-      };
-    }
-
-    // Add options specific to Mongoose 5.
-    if (mongoose.version.match(/^5\./)) {
-      this.options = {
-        ...this.options,
-        useNewUrlParser: true,
-        useCreateIndex: true
-      };
-    }
+    this.options = options;
   }
 
   /**
