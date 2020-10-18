@@ -1,17 +1,4 @@
-const Promise = require('bluebird');
 const mongoose = require('mongoose'); // eslint-disable-line import/no-unresolved
-
-// Use Bluebird promises.
-mongoose.Promise = Promise;
-
-// Set default schema options.
-mongoose.plugin(schema => {
-  // Turn on timestamps for all models.
-  schema.options.timestamps = true;
-
-  // Turn on usePushEach for all models.
-  schema.options.usePushEach = true;
-});
 
 class Client {
   constructor(uri, options = {}) {
@@ -21,7 +8,34 @@ class Client {
 
     this.uri = uri;
     this.connection = null;
-    this.options = options;
+
+    this.options = {
+      // Reference: https://mongoosejs.com/docs/lambda.html
+      // Buffering means mongoose will queue up operations if it gets
+      // disconnected from MongoDB and send them when it reconnects.
+      // With serverless, better to fail fast if not connected.
+      bufferCommands: false, // Disable mongoose buffering
+      bufferMaxEntries: 0, // and MongoDB driver buffering
+
+      ...options
+    };
+
+    // Add options specific to Mongoose 4.
+    if (mongoose.version.match(/^4\./)) {
+      this.options = {
+        ...this.options,
+        useMongoClient: true
+      };
+    }
+
+    // Add options specific to Mongoose 5.
+    if (mongoose.version.match(/^5\./)) {
+      this.options = {
+        ...this.options,
+        useNewUrlParser: true,
+        useCreateIndex: true
+      };
+    }
   }
 
   /**
