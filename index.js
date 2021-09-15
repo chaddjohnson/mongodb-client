@@ -20,6 +20,11 @@ class Client {
       ...options
     };
 
+    // `bufferMaxEntries` is deprecated when `useUnifiedTopology` is set.
+    if (options.useUnifiedTopology) {
+      delete options.bufferMaxEntries;
+    }
+
     // Add options specific to Mongoose 4.
     if (mongoose.version.match(/^4\./)) {
       this.options = {
